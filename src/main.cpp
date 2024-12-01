@@ -1,37 +1,44 @@
-#include <gps.h>
-#include <usb.h>
-#include <led.h>
-#include <screen.h>
-#include <imu.h>
-#include <circular_buffer.h>
+#include "accel_data_page.h"
+#include "gps_data_page.h"
+#include "displayer.h"
+#include "gps.h"
+#include "imu.h"
+#include "led.h"
+#include "scheduler.h"
+#include "usb.h"
 
-Screen screen;
-U8G2 *disp;
-Led led;
-sensor::NavPvt pvt{};
-sensor::Imu imu;
-sensor::ImuData imu_data;
-sensor::ImuData imu_data_average;
-CircularBuffer<sensor::ImuData, 256> imu_data_buffer;
-/* long */ timer_hw_t time; /* ago I can still remember how the music used to make me smile */
+#include <memory>
 
-void setup()
+int main()
 {
-  screen.Init("Smooth Motion");
+  init(); // Arduino initialisation, required
+
+  Led led;
+  Usb usb(std::make_unique<Scheduler>(1));
+
+  std::shared_ptr<sensor::Imu> imu = \
+    std::make_shared<sensor::Imu>(std::make_unique<Scheduler>(4000));
+  std::shared_ptr<sensor::Gps> gps = \
+    std::make_shared<sensor::Gps>(std::make_unique<Scheduler>(10));
+
+  AccelDataPage accel_data_page(imu);
+  GpsDataPage gps_data_page(gps);
+
+  Displayer displayer(std::make_unique<Scheduler>(60), gps_data_page);
+
   led.Colour(0, 255, 0, 1);
   led.On();
-  delay(300);
-  sensor::GpsInit();
-  usb::Init();
-  imu.Init(IMU_I2C_ADDR);
+  usb.Init();
+  displayer.InitAndSplash((char *)"Smooth Motion");
+  gps->Init();
+  imu->Init(IMU_I2C_ADDR);
   led.Colour(255, 255, 255, 1);
-}
+  displayer.Start();
 
-void loop()
-{
-  sensor::GpsProcess(&pvt);
-  imu_data = imu.ReadData();
-  imu_data_buffer.AddToArray(imu_data);
-  imu_data_average = imu_data_buffer.GetBufferAverage();
-  screen.ImuAccel(&imu_data_average);
+  while (true)
+  {
+    gps->ScheduledRun();
+    imu->ScheduledRun();
+    displayer.ScheduledRun();
+  }
 }

@@ -1,5 +1,10 @@
 #include "imu.h"
 
+sensor::Imu::Imu(std::unique_ptr<Scheduler> scheduler)
+  : scheduler_(std::move(scheduler)), 
+    imu_data_(std::make_shared<ImuData>())
+{}
+
 void sensor::Imu::Init(unsigned char i2c_addr)
 {
   if (!icm_.begin_I2C(i2c_addr))
@@ -88,9 +93,20 @@ void sensor::Imu::Init(unsigned char i2c_addr)
     Serial.println("100 Hz");
     break;
   }
+  scheduler_->Start();
 }
 
-sensor::ImuData sensor::Imu::ReadData()
+std::shared_ptr<sensor::ImuData> sensor::Imu::GetData()
+{
+  return imu_data_;
+}
+
+float sensor::Imu::GetAverageAccel()
+{
+  return accel_hist;
+}
+
+void sensor::Imu::ReadData()
 {
   icm_.getEvent(&accel_, &gyro_, &temp_, &mag_);
 
@@ -98,21 +114,33 @@ sensor::ImuData sensor::Imu::ReadData()
   snprintf(print_cstr, 64, "x: %0.3f, y: %0.3f, z: %0.3f", accel_.acceleration.x, accel_.acceleration.y, accel_.acceleration.z);
   Serial.println(print_cstr);
 
-  sensor::ImuData imu_data;
+  imu_data_->accel_x = accel_.acceleration.x;
+  imu_data_->accel_y = accel_.acceleration.y;
+  imu_data_->accel_z = accel_.acceleration.z;
 
-  imu_data.accel_x = accel_.acceleration.x;
-  imu_data.accel_y = accel_.acceleration.y;
-  imu_data.accel_z = accel_.acceleration.z;
+  imu_data_->gyro_x = gyro_.gyro.x;
+  imu_data_->gyro_y = gyro_.gyro.y;
+  imu_data_->gyro_z = gyro_.gyro.z;
 
-  imu_data.gyro_x = gyro_.gyro.x;
-  imu_data.gyro_y = gyro_.gyro.y;
-  imu_data.gyro_z = gyro_.gyro.z;
+  imu_data_->mag_x = mag_.magnetic.x;
+  imu_data_->mag_y = mag_.magnetic.y;
+  imu_data_->mag_z = mag_.magnetic.z;
 
-  imu_data.mag_x = mag_.magnetic.x;
-  imu_data.mag_y = mag_.magnetic.y;
-  imu_data.mag_z = mag_.magnetic.z;
+  imu_data_->temp = temp_.temperature;
 
-  imu_data.temp = temp_.temperature;
+  float new_accel = sqrt( \
+    sq(accel_.acceleration.x) + \
+    sq(accel_.acceleration.y) + \
+    sq(accel_.acceleration.z));
+  
+  accel_hist = (accel_hist * HIST_BIAS) + (new_accel * (1.0f - HIST_BIAS));
+}
 
-  return imu_data;
+
+void sensor::Imu::ScheduledRun()
+{
+  if (scheduler_->ShouldRun())
+  {
+    this->ReadData();
+  }
 }

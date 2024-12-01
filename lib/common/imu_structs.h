@@ -6,31 +6,18 @@ namespace sensor
 {
   struct ImuData
   {
-    float accel_x;
-    float accel_y;
-    float accel_z;
+    float accel_x = 0;
+    float accel_y = 0;
+    float accel_z = 0;
 
-    float gyro_x;
-    float gyro_y;
-    float gyro_z;
+    float gyro_x = 0;
+    float gyro_y = 0;
+    float gyro_z = 0;
 
-    float mag_x;
-    float mag_y;
-    float mag_z;
+    float mag_x = 0;
+    float mag_y = 0;
+    float mag_z = 0;
 
-    float temp;
-
-    ImuData& operator+=(const ImuData& rhs);
-    friend ImuData operator+(ImuData lhs, const ImuData& rhs)
-    {
-        lhs += rhs;
-        return lhs;
-    }
-    ImuData& operator*=(const float rhs);
-    friend ImuData operator*(ImuData lhs, const float rhs)
-    {
-        lhs *= rhs;
-        return lhs;
-    }
+    float temp = 0;
   };
 }

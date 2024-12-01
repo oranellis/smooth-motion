@@ -1,5 +1,8 @@
+#pragma once
+
 #include "gps_structs.h"
 #include "imu_structs.h"
+#include "scheduler.h"
 
 #include <U8g2lib.h>
 #include <Wire.h>
@@ -8,30 +11,20 @@
 
 #define STR_MAX_LEN 64
 
-class Screen
+class OledScreen
 {
-public:
-  /// @brief Initialises the screen
-  /// @param text The startup text to display
-  void Init(char *text);
-  /// @brief Prints gps coordinates to the screen
-  /// @param pvt Pointer to the gps data struct
-  void Coords(sensor::NavPvt *pvt);
-  /// @brief Prints accelerometer data to the screen
-  /// @param imu_data Pointer to the imu data struct
-  void ImuAccel(sensor::ImuData *imu_data);
-  /// @brief Prints gyroscope data to the screen
-  /// @param imu_data Pointer to the imu data struct
-  void ImuGyro(sensor::ImuData *imu_data);
-
 private:
-  U8G2 *display_;
-  const unsigned char *normal_font_ = u8g2_font_profont12_mr;
-  const char normal_font_height_ = 12;
-  const char normal_font_ascent_ = 8;
-  const unsigned char *splash_font_ = u8g2_font_logisoso16_tr;
+  U8G2 * display_;
   float maxaccel_;
 
+public:
+  static constexpr const unsigned char *normal_font_ = u8g2_font_profont12_mr;
+  static constexpr const char normal_font_height_ = 12;
+  static constexpr const char normal_font_ascent_ = 8;
+  static constexpr const unsigned char *splash_font_ = u8g2_font_logisoso16_tr;
+
+  void Clear();
+  void Init(const char * text);
   /// @brief Prints a line of text to the screen and increments the y_pos, does not send the buffer
   /// @param y_pos Base line y position for the text, is incrememted by the text height after draw
   /// @param format The text with format specifiers
@@ -42,4 +35,5 @@ private:
   /// @param format The text with format specifiers
   /// @param ... The format matches
   void PrintLine(unsigned short y_pos, const char *format, ...);
+  void Render();
 };

@@ -1,15 +1,19 @@
 #include "usb.h"
 
-namespace usb
+Usb::Usb(std::unique_ptr<Scheduler> scheduler) : scheduler_(std::move(scheduler))
 {
-  void Init()
-  {
-    Serial.begin(9600);
-    String init_msg = "Welcome to smooth-motion";
-    Serial.println(init_msg.c_str());
-  }
+}
 
-  void Print(char *format, ...)
+void Usb::Init()
+{
+  Serial.begin(9600);
+  String init_msg = "Welcome to smooth-motion";
+  Serial.println(init_msg.c_str());
+}
+
+void Usb::ScheduledLog(char *format, ...)
+{
+  if (scheduler_->ShouldRun())
   {
     char print_cstr[SERIAL_STR_MAX_LEN];
     va_list args;

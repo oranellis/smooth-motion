@@ -14,10 +14,12 @@ private:
 public:
   CircularBuffer() = default;
 
-  CircularBuffer(T initial_value)
+  CircularBuffer(const T initial_value)
   {
     index = 0;
-    std::fill_n(buffer.data, N, initial_value);
+    for (unsigned int i = 0; i < N; i++) {
+      buffer[i] = initial_value;
+    }
   }
 
   const std::array<T, N> GetArray() const
@@ -33,7 +35,9 @@ public:
 
   void FillBuffer(const T element)
   {
-    std::fill_n(buffer.data, N, element);
+    for (unsigned int i = 0; i < N; i++) {
+      buffer[i] = element;
+    }
   }
 
   T GetBufferAverage()
