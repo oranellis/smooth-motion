@@ -1,13 +1,13 @@
 #include "gps_data_page.h"
 
-GpsDataPage::GpsDataPage(std::shared_ptr<sensor::Gps> gps)
+sm::GpsDataPage::GpsDataPage(std::shared_ptr<sm::sensor::Gps> gps)
   : gps_(gps)
 {}
 
-void GpsDataPage::DrawPage(std::shared_ptr<OledScreen> screen)
+void sm::GpsDataPage::DrawPage(std::shared_ptr<sm::OledScreen> screen)
 {
-  unsigned short y_pos = OledScreen::normal_font_ascent_;
-  sensor::NavPvt pvt = gps_->GetNavPvt();
+  unsigned short y_pos = sm::OledScreen::normal_font_ascent_;
+  sm::sensor::NavPvt pvt = gps_->GetNavPvt();
   screen->Clear();
   screen->PrintLine(&y_pos, "lat: %d", pvt.lat);
   screen->PrintLine(&y_pos, "lon: %d", pvt.lon);

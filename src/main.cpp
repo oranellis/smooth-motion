@@ -13,18 +13,18 @@ int main()
 {
   init(); // Arduino initialisation, required
 
-  Led led;
-  Usb usb(std::make_unique<Scheduler>(1));
+  sm::Led led;
+  sm::Usb usb(std::make_unique<sm::Scheduler>());
 
-  std::shared_ptr<sensor::Imu> imu = \
-    std::make_shared<sensor::Imu>(std::make_unique<Scheduler>(4000));
-  std::shared_ptr<sensor::Gps> gps = \
-    std::make_shared<sensor::Gps>(std::make_unique<Scheduler>(10));
+  std::shared_ptr<sm::sensor::Imu> imu = \
+    std::make_shared<sm::sensor::Imu>(std::make_unique<sm::Scheduler>());
+  std::shared_ptr<sm::sensor::Gps> gps = \
+    std::make_shared<sm::sensor::Gps>(std::make_unique<sm::Scheduler>());
 
-  AccelDataPage accel_data_page(imu);
-  GpsDataPage gps_data_page(gps);
+  sm::AccelDataPage accel_data_page(imu);
+  sm::GpsDataPage gps_data_page(gps);
 
-  Displayer displayer(std::make_unique<Scheduler>(60), gps_data_page);
+  sm::Displayer displayer(std::make_unique<sm::Scheduler>(), gps_data_page);
 
   led.Colour(0, 255, 0, 1);
   led.On();

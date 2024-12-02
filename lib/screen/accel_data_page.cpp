@@ -1,13 +1,13 @@
 #include "accel_data_page.h"
 
-AccelDataPage::AccelDataPage(std::shared_ptr<sensor::Imu> imu)
+sm::AccelDataPage::AccelDataPage(std::shared_ptr<sm::sensor::Imu> imu)
   : imu_(imu)
 {}
 
-void AccelDataPage::DrawPage(std::shared_ptr<OledScreen> screen)
+void sm::AccelDataPage::DrawPage(std::shared_ptr<sm::OledScreen> screen)
 {
-  unsigned short y_pos = OledScreen::normal_font_ascent_;
-  std::shared_ptr<sensor::ImuData> imu_data = imu_->GetData();
+  unsigned short y_pos = sm::OledScreen::normal_font_ascent_;
+  std::shared_ptr<sm::sensor::ImuData> imu_data = imu_->GetData();
   float average_accel = imu_->GetAverageAccel();
   screen->Clear();
   screen->PrintLine(&y_pos, "x: %0.4f", imu_data->accel_x);

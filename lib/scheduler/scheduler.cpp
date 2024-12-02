@@ -1,24 +1,24 @@
 #include "scheduler.h"
 
-unsigned int Scheduler::WaitPeriodFromRate(unsigned int hz)
+unsigned int sm::Scheduler::WaitPeriodFromRate(unsigned int hz)
 {
   return (1000000/hz);
 }
 
-Scheduler::Scheduler()
+sm::Scheduler::Scheduler()
   : next_run_time_us_(MAX_ULONG),
-    wait_period_(Scheduler::WaitPeriodFromRate(1))
+    wait_period_(sm::Scheduler::WaitPeriodFromRate(1))
 {
 }
 
-Scheduler::~Scheduler() = default;
+sm::Scheduler::~Scheduler() = default;
 
-void Scheduler::SetRate(unsigned int hz)
+void sm::Scheduler::SetRate(unsigned int hz)
 {
-  wait_period_ = Scheduler::WaitPeriodFromRate(hz);
+  wait_period_ = sm::Scheduler::WaitPeriodFromRate(hz);
 }
 
-bool Scheduler::ShouldRun()
+bool sm::Scheduler::ShouldRun()
 {
   unsigned long time_now = micros();
   if (time_now < next_run_time_us_)
@@ -36,12 +36,12 @@ bool Scheduler::ShouldRun()
   return true;
 }
 
-void Scheduler::Start()
+void sm::Scheduler::Start()
 {
   next_run_time_us_ = micros();
 }
 
-void Scheduler::Stop()
+void sm::Scheduler::Stop()
 {
   next_run_time_us_ = MAX_ULONG;
 }

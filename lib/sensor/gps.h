@@ -10,7 +10,7 @@
 
 #define GPS_SERIAL Serial1
 
-namespace sensor
+namespace sm::sensor
 {
   const unsigned char UBLOX_INIT[] PROGMEM = {
       // Disable NMEA
@@ -52,19 +52,20 @@ namespace sensor
       // 0x17, 0x31, 0xBF // Not working
 
   };
+
   const unsigned char UBX_HEADER[] = {0xB5, 0x62};
 
   class Gps
   {
-    std::unique_ptr<Scheduler> scheduler_;
-    sensor::NavPvt pvt_;
-    static void CalcChecksum(unsigned char *CK, NavPvt pvt);
+    std::unique_ptr<sm::Scheduler> scheduler_;
+    sm::sensor::NavPvt pvt_;
+    static void CalcChecksum(unsigned char *CK, sm::sensor::NavPvt pvt);
     bool Process();
 
     public:
-    Gps(std::unique_ptr<Scheduler> scheduler);
+    Gps(std::unique_ptr<sm::Scheduler> scheduler);
     ~Gps() = default;
-    sensor::NavPvt GetNavPvt();
+    sm::sensor::NavPvt GetNavPvt();
     void Init();
     void ScheduledRun();
   };

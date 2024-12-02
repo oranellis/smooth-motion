@@ -1,18 +1,18 @@
 #include "displayer.h"
 
-Displayer::Displayer(std::unique_ptr<Scheduler> scheduler,
+sm::Displayer::Displayer(std::unique_ptr<sm::Scheduler> scheduler,
                      IDataPage& data_page)
   : data_page_(data_page),
     scheduler_(std::move(scheduler)),
-    screen_(std::make_shared<OledScreen>())
+    screen_(std::make_shared<sm::OledScreen>())
 {}
 
-void Displayer::InitAndSplash(const char * splash_text)
+void sm::Displayer::InitAndSplash(const char * splash_text)
 {
   screen_->Init(splash_text);
 }
 
-void Displayer::ScheduledRun()
+void sm::Displayer::ScheduledRun()
 {
   if (scheduler_->ShouldRun())
   {
@@ -20,12 +20,12 @@ void Displayer::ScheduledRun()
   }
 }
 
-void Displayer::SetDataPage(IDataPage& data_page)
+void sm::Displayer::SetDataPage(sm::IDataPage& data_page)
 {
   data_page_ = data_page;
 }
 
-void Displayer::Start()
+void sm::Displayer::Start()
 {
   scheduler_->Start();
 }

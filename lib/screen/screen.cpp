@@ -1,11 +1,11 @@
 #include "screen.h"
 
-void OledScreen::Clear()
+void sm::OledScreen::Clear()
 {
   display_->clearBuffer();
 }
 
-void OledScreen::Init(const char * text)
+void sm::OledScreen::Init(const char * text)
 {
   display_ = new U8G2_SSD1306_128X64_NONAME_F_HW_I2C(U8G2_R0, U8X8_PIN_NONE);
   display_->begin();
@@ -15,7 +15,7 @@ void OledScreen::Init(const char * text)
   display_->sendBuffer();
 }
 
-void OledScreen::PrintLine(unsigned short * y_pos, const char* format, ...)
+void sm::OledScreen::PrintLine(unsigned short * y_pos, const char* format, ...)
 {
     char disp_cstr[STR_MAX_LEN];
     va_list args;
@@ -27,7 +27,7 @@ void OledScreen::PrintLine(unsigned short * y_pos, const char* format, ...)
     *y_pos += normal_font_height_;
 }
 
-void OledScreen::PrintLine(unsigned short y_pos, const char* format, ...)
+void sm::OledScreen::PrintLine(unsigned short y_pos, const char* format, ...)
 {
     char disp_cstr[STR_MAX_LEN];
     va_list args;
@@ -38,12 +38,12 @@ void OledScreen::PrintLine(unsigned short y_pos, const char* format, ...)
     display_->drawStr(0, y_pos, disp_cstr);
 }
 
-void OledScreen::Render()
+void sm::OledScreen::Render()
 {
   display_->sendBuffer();
 }
 
-// void OledScreen::Coords(sensor::NavPvt *pvt)
+// void sm::OledScreen::Coords(sensor::NavPvt *pvt)
 // {
 //   unsigned short y_pos = normal_font_ascent_;
 //   display_->clearBuffer();

@@ -2,7 +2,7 @@
 
 #define IMU_I2C_ADDR 0x68
 
-namespace sensor
+namespace sm::sensor
 {
   struct ImuData
   {

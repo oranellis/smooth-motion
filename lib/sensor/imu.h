@@ -13,24 +13,24 @@
 #define IMU_I2C_ADDR 0x68
 #define HIST_BIAS 0.75f
 
-namespace sensor
+namespace sm::sensor
 {
   class Imu
   {
   private:
-    std::unique_ptr<Scheduler> scheduler_;
+    std::unique_ptr<sm::Scheduler> scheduler_;
     Adafruit_ICM20948 icm_;
     sensors_event_t accel_;
     sensors_event_t gyro_;
     sensors_event_t mag_;
     sensors_event_t temp_;
-    std::shared_ptr<sensor::ImuData> imu_data_;
+    std::shared_ptr<sm::sensor::ImuData> imu_data_;
     float accel_hist;
     void ReadData();
 
   public:
-    Imu(std::unique_ptr<Scheduler> scheduler);
-    std::shared_ptr<sensor::ImuData> GetData();
+    Imu(std::unique_ptr<sm::Scheduler> scheduler);
+    std::shared_ptr<sm::sensor::ImuData> GetData();
     float GetAverageAccel();
     void Init(unsigned char i2c_addr);
     void ScheduledRun();

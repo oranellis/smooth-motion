@@ -4,12 +4,15 @@
 #include "gps.h"
 #include "screen.h"
 
-class GpsDataPage : public IDataPage
+namespace sm
 {
+  class GpsDataPage : public IDataPage
+  {
   private:
-  std::shared_ptr<sensor::Gps> gps_;
+    std::shared_ptr<sm::sensor::Gps> gps_;
 
   public:
-  GpsDataPage(std::shared_ptr<sensor::Gps> gps);
-  void DrawPage(std::shared_ptr<OledScreen> screen) override;
-};
+    GpsDataPage(std::shared_ptr<sm::sensor::Gps> gps);
+    void DrawPage(std::shared_ptr<OledScreen> screen) override;
+  };
+}

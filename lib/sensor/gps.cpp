@@ -2,21 +2,21 @@
 
 #include "gps.h"
 
-void sensor::Gps::CalcChecksum(unsigned char *CK, NavPvt pvt)
+void sm::sensor::Gps::CalcChecksum(unsigned char *CK, sm::sensor::NavPvt pvt)
 {
   memset(CK, 0, 2);
-  for (int i = 0; i < (int)sizeof(NavPvt); i++)
+  for (int i = 0; i < (int)sizeof(sm::sensor::NavPvt); i++)
   {
     CK[0] += ((unsigned char *)(&pvt))[i];
     CK[1] += CK[0];
   }
 }
 
-bool sensor::Gps::Process()
+bool sm::sensor::Gps::Process()
 {
   static int readPosition = 0;
   static unsigned char checksum[2];
-  const int payloadSize = sizeof(NavPvt);
+  const int payloadSize = sizeof(sm::sensor::NavPvt);
 
   while (GPS_SERIAL.available())
   {
@@ -37,7 +37,7 @@ bool sensor::Gps::Process()
 
       if (readPosition == (payloadSize + 2))
       {
-        sensor::Gps::CalcChecksum(checksum, pvt_);
+        sm::sensor::Gps::CalcChecksum(checksum, pvt_);
       }
       else if (readPosition == (payloadSize + 3))
       {
@@ -61,17 +61,17 @@ bool sensor::Gps::Process()
   return false;
 }
 
-sensor::Gps::Gps(std::unique_ptr<Scheduler> scheduler)
+sm::sensor::Gps::Gps(std::unique_ptr<Scheduler> scheduler)
 {
   scheduler_ = std::move(scheduler);
 }
 
-sensor::NavPvt sensor::Gps::GetNavPvt()
+sm::sensor::NavPvt sm::sensor::Gps::GetNavPvt()
 {
   return pvt_;
 }
 
-void sensor::Gps::Init()
+void sm::sensor::Gps::Init()
 {
   GPS_SERIAL.begin(9600);
   for (unsigned int i = 0; i < sizeof(UBLOX_INIT); i++)
@@ -84,7 +84,7 @@ void sensor::Gps::Init()
   scheduler_->Start();
 }
 
-void sensor::Gps::ScheduledRun()
+void sm::sensor::Gps::ScheduledRun()
 {
   if (scheduler_->ShouldRun())
   {

@@ -1,11 +1,11 @@
 #include "imu.h"
 
-sensor::Imu::Imu(std::unique_ptr<Scheduler> scheduler)
+sm::sensor::Imu::Imu(std::unique_ptr<Scheduler> scheduler)
   : scheduler_(std::move(scheduler)), 
     imu_data_(std::make_shared<ImuData>())
 {}
 
-void sensor::Imu::Init(unsigned char i2c_addr)
+void sm::sensor::Imu::Init(unsigned char i2c_addr)
 {
   if (!icm_.begin_I2C(i2c_addr))
   {
@@ -96,17 +96,17 @@ void sensor::Imu::Init(unsigned char i2c_addr)
   scheduler_->Start();
 }
 
-std::shared_ptr<sensor::ImuData> sensor::Imu::GetData()
+std::shared_ptr<sm::sensor::ImuData> sm::sensor::Imu::GetData()
 {
   return imu_data_;
 }
 
-float sensor::Imu::GetAverageAccel()
+float sm::sensor::Imu::GetAverageAccel()
 {
   return accel_hist;
 }
 
-void sensor::Imu::ReadData()
+void sm::sensor::Imu::ReadData()
 {
   icm_.getEvent(&accel_, &gyro_, &temp_, &mag_);
 
@@ -137,7 +137,7 @@ void sensor::Imu::ReadData()
 }
 
 
-void sensor::Imu::ScheduledRun()
+void sm::sensor::Imu::ScheduledRun()
 {
   if (scheduler_->ShouldRun())
   {

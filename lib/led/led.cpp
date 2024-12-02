@@ -1,6 +1,6 @@
 #include "led.h"
 
-Led::Led()
+sm::Led::Led()
 {
   red_ = 255; // max 8 bit num
   green_ = 255;
@@ -12,30 +12,30 @@ Led::Led()
   FastLED.setBrightness(0);
 }
 
-Led::~Led()
+sm::Led::~Led()
 {
   FastLED.clearData();
 }
 
-void Led::On()
+void sm::Led::On()
 {
   state_ = true;
   UpdateLed();
 }
 
-void Led::Off()
+void sm::Led::Off()
 {
   state_ = false;
   UpdateLed();
 }
 
-void Led::Toggle()
+void sm::Led::Toggle()
 {
   state_ = !state_;
   UpdateLed();
 }
 
-void Led::Colour(
+void sm::Led::Colour(
   unsigned char r,
   unsigned char g,
   unsigned char b,
@@ -48,7 +48,7 @@ void Led::Colour(
   UpdateLed();
 }
 
-void Led::UpdateLed()
+void sm::Led::UpdateLed()
 {
   if (state_)
   {

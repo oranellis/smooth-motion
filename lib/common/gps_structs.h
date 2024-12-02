@@ -1,6 +1,6 @@
 #pragma once
 
-namespace sensor
+namespace sm::sensor
 {
   struct NavPvt
   {
