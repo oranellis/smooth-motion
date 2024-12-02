@@ -5,11 +5,13 @@ unsigned int Scheduler::WaitPeriodFromRate(unsigned int hz)
   return (1000000/hz);
 }
 
-Scheduler::Scheduler(unsigned int hz)
+Scheduler::Scheduler()
+  : next_run_time_us_(MAX_ULONG),
+    wait_period_(Scheduler::WaitPeriodFromRate(1))
 {
-  next_run_time_us_ = MAX_ULONG;
-  wait_period_ = Scheduler::WaitPeriodFromRate(hz);
 }
+
+Scheduler::~Scheduler() = default;
 
 void Scheduler::SetRate(unsigned int hz)
 {
