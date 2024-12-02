@@ -2,6 +2,11 @@
 
 #include "gps.h"
 
+sm::sensor::Gps::Gps(std::shared_ptr<sm::sensor::NavPvt> nav_pvt)
+    : nav_pvt_(nav_pvt)
+{
+}
+
 void sm::sensor::Gps::CalcChecksum(unsigned char *CK, sm::sensor::NavPvt pvt)
 {
   memset(CK, 0, 2);
@@ -12,7 +17,19 @@ void sm::sensor::Gps::CalcChecksum(unsigned char *CK, sm::sensor::NavPvt pvt)
   }
 }
 
-bool sm::sensor::Gps::Process()
+void sm::sensor::Gps::InitSerial()
+{
+  GPS_SERIAL.begin(9600);
+  for (unsigned int i = 0; i < sizeof(UBLOX_INIT); i++)
+  {
+    GPS_SERIAL.write(pgm_read_byte(UBLOX_INIT + i));
+    delay(5); // simulating a 38400baud pace (or less), otherwise commands are not accepted by the device.
+  }
+  GPS_SERIAL.end();
+  GPS_SERIAL.begin(115200);
+}
+
+bool sm::sensor::Gps::ReadData()
 {
   static int readPosition = 0;
   static unsigned char checksum[2];
@@ -31,13 +48,13 @@ bool sm::sensor::Gps::Process()
     else
     {
       if ((readPosition - 2) < payloadSize)
-        ((unsigned char *)(&pvt_))[readPosition - 2] = c;
+        ((unsigned char *)(&pvt_temp_))[readPosition - 2] = c;
 
       readPosition++;
 
       if (readPosition == (payloadSize + 2))
       {
-        sm::sensor::Gps::CalcChecksum(checksum, pvt_);
+        sm::sensor::Gps::CalcChecksum(checksum, pvt_temp_);
       }
       else if (readPosition == (payloadSize + 3))
       {
@@ -49,7 +66,7 @@ bool sm::sensor::Gps::Process()
         readPosition = 0;
         if (c == checksum[1])
         {
-          return true;
+          *nav_pvt_ = pvt_temp_;
         }
       }
       else if (readPosition > (payloadSize + 4))
@@ -59,35 +76,4 @@ bool sm::sensor::Gps::Process()
     }
   }
   return false;
-}
-
-sm::sensor::Gps::Gps(std::unique_ptr<Scheduler> scheduler)
-{
-  scheduler_ = std::move(scheduler);
-}
-
-sm::sensor::NavPvt sm::sensor::Gps::GetNavPvt()
-{
-  return pvt_;
-}
-
-void sm::sensor::Gps::Init()
-{
-  GPS_SERIAL.begin(9600);
-  for (unsigned int i = 0; i < sizeof(UBLOX_INIT); i++)
-  {
-    GPS_SERIAL.write(pgm_read_byte(UBLOX_INIT + i));
-    // delay(5); // simulating a 38400baud pace (or less), otherwise commands are not accepted by the device.
-  }
-  GPS_SERIAL.end();
-  GPS_SERIAL.begin(115200);
-  scheduler_->Start();
-}
-
-void sm::sensor::Gps::ScheduledRun()
-{
-  if (scheduler_->ShouldRun())
-  {
-    this->Process();
-  }
 }

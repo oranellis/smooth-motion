@@ -1,6 +1,11 @@
 #pragma once
 
+#include "fast_task.h"
+#include "rate_task.h"
+
 #include <Arduino.h>
+
+#include <vector>
 
 #define MAX_ULONG 18446744073709551615
 
@@ -9,12 +14,11 @@ namespace sm
   class Scheduler
   {
   private:
-    unsigned int wait_period_;
-    unsigned long next_run_time_us_;
-    static unsigned int WaitPeriodFromRate(unsigned int hz);
+    std::vector<FastTask> fast_tasks_;
+    std::vector<RateTask> rate_tasks_;
 
-    Scheduler();
-    ~Scheduler();
+    Scheduler() = default;
+    ~Scheduler() = default;
     Scheduler(const Scheduler &) = delete;
     Scheduler &operator=(const Scheduler &) = delete;
 
@@ -24,9 +28,8 @@ namespace sm
       static Scheduler instance; // Guaranteed to be initialized only once
       return instance;
     }
-    void SetRate(unsigned int hz);
-    bool ShouldRun();
-    void Start();
-    void Stop();
+    void AddTask(FastTask fast_task);
+    void AddTask(RateTask rate_task);
+    void RunSchedule();
   };
 }

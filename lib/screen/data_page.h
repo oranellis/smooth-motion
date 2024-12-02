@@ -2,6 +2,8 @@
 
 #include "screen.h"
 
+#include <memory>
+
 namespace sm
 {
   class IDataPage

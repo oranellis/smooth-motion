@@ -14,31 +14,40 @@ int main()
   init(); // Arduino initialisation, required
 
   sm::Led led;
-  sm::Usb usb(std::make_unique<sm::Scheduler>());
+  sm::Usb usb;
 
-  std::shared_ptr<sm::sensor::Imu> imu = \
-    std::make_shared<sm::sensor::Imu>(std::make_unique<sm::Scheduler>());
-  std::shared_ptr<sm::sensor::Gps> gps = \
-    std::make_shared<sm::sensor::Gps>(std::make_unique<sm::Scheduler>());
+  auto imu_data = sm::sensor::ImuData::CreateSharedPtr();
+  sm::sensor::Imu imu{imu_data};
+  auto nav_pvt = sm::sensor::NavPvt::CreateSharedPtr();
+  sm::sensor::Gps gps{nav_pvt};
 
-  sm::AccelDataPage accel_data_page(imu);
-  sm::GpsDataPage gps_data_page(gps);
+  sm::AccelDataPage accel_data_page{imu_data};
+  sm::GpsDataPage gps_data_page{nav_pvt};
+  sm::Displayer displayer{gps_data_page};
 
-  sm::Displayer displayer(std::make_unique<sm::Scheduler>(), gps_data_page);
+  sm::Scheduler &scheduler = sm::Scheduler::GetScheduler();
 
   led.Colour(0, 255, 0, 1);
   led.On();
-  usb.Init();
   displayer.InitAndSplash((char *)"Smooth Motion");
-  gps->Init();
-  imu->Init(IMU_I2C_ADDR);
+  usb.Init();
+  gps.InitSerial();
+  imu.InitI2c(IMU_I2C_ADDR);
   led.Colour(255, 255, 255, 1);
-  displayer.Start();
+
+  auto imu_task = sm::RateTask{[&imu]()
+                               { imu.GetData(); }, 400};
+  auto gps_task = sm::RateTask{[&gps]()
+                               { gps.ReadData(); }, 10};
+  auto display_task = sm::RateTask{[&displayer]()
+                                   { displayer.Display(); }, 60};
+
+  scheduler.AddTask(imu_task);
+  scheduler.AddTask(gps_task);
+  scheduler.AddTask(display_task);
 
   while (true)
   {
-    gps->ScheduledRun();
-    imu->ScheduledRun();
-    displayer.ScheduledRun();
+    scheduler.RunSchedule();
   }
 }

@@ -1,13 +1,12 @@
 #include "imu.h"
 
-sm::sensor::Imu::Imu(std::unique_ptr<Scheduler> scheduler)
-  : scheduler_(std::move(scheduler)), 
-    imu_data_(std::make_shared<ImuData>())
+sm::sensor::Imu::Imu(std::shared_ptr<sm::sensor::ImuData> imu_data)
+  : imu_data_(imu_data)
 {}
 
-void sm::sensor::Imu::Init(unsigned char i2c_addr)
+void sm::sensor::Imu::InitI2c(unsigned char addr)
 {
-  if (!icm_.begin_I2C(i2c_addr))
+  if (!icm_.begin_I2C(addr))
   {
     Serial.println("Failed to find ICM20948"); // replace with logger interface
     while (true)                               // Trap and halt execution
@@ -93,7 +92,6 @@ void sm::sensor::Imu::Init(unsigned char i2c_addr)
     Serial.println("100 Hz");
     break;
   }
-  scheduler_->Start();
 }
 
 std::shared_ptr<sm::sensor::ImuData> sm::sensor::Imu::GetData()
@@ -134,13 +132,4 @@ void sm::sensor::Imu::ReadData()
     sq(accel_.acceleration.z));
   
   accel_hist = (accel_hist * HIST_BIAS) + (new_accel * (1.0f - HIST_BIAS));
-}
-
-
-void sm::sensor::Imu::ScheduledRun()
-{
-  if (scheduler_->ShouldRun())
-  {
-    this->ReadData();
-  }
 }

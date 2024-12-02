@@ -1,8 +1,7 @@
 // Code by Karl Hartmann from https://github.com/karl03/gps-speedo
 #pragma once
 
-#include "gps_structs.h"
-#include "scheduler.h"
+#include "gps_data.h"
 
 #include "Arduino.h"
 
@@ -57,16 +56,15 @@ namespace sm::sensor
 
   class Gps
   {
-    std::unique_ptr<sm::Scheduler> scheduler_;
-    sm::sensor::NavPvt pvt_;
+  private:
+    std::shared_ptr<sm::sensor::NavPvt> nav_pvt_;
+    sm::sensor::NavPvt pvt_temp_;
     static void CalcChecksum(unsigned char *CK, sm::sensor::NavPvt pvt);
-    bool Process();
 
-    public:
-    Gps(std::unique_ptr<sm::Scheduler> scheduler);
+  public:
+    Gps(std::shared_ptr<sm::sensor::NavPvt> nav_pvt);
     ~Gps() = default;
-    sm::sensor::NavPvt GetNavPvt();
-    void Init();
-    void ScheduledRun();
+    void InitSerial();
+    bool ReadData();
   };
 }

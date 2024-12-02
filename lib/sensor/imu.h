@@ -1,7 +1,6 @@
 #pragma once
 
-#include "imu_structs.h"
-#include "scheduler.h"
+#include "imu_data.h"
 
 #include <Adafruit_ICM20X.h>
 #include <Adafruit_ICM20948.h>
@@ -18,7 +17,6 @@ namespace sm::sensor
   class Imu
   {
   private:
-    std::unique_ptr<sm::Scheduler> scheduler_;
     Adafruit_ICM20948 icm_;
     sensors_event_t accel_;
     sensors_event_t gyro_;
@@ -26,13 +24,12 @@ namespace sm::sensor
     sensors_event_t temp_;
     std::shared_ptr<sm::sensor::ImuData> imu_data_;
     float accel_hist;
-    void ReadData();
 
   public:
-    Imu(std::unique_ptr<sm::Scheduler> scheduler);
+    Imu(std::shared_ptr<sm::sensor::ImuData> imu_data);
     std::shared_ptr<sm::sensor::ImuData> GetData();
     float GetAverageAccel();
-    void Init(unsigned char i2c_addr);
-    void ScheduledRun();
+    void InitI2c(unsigned char addr);
+    void ReadData();
   };
 }

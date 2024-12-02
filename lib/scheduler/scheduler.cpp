@@ -1,47 +1,29 @@
 #include "scheduler.h"
 
-unsigned int sm::Scheduler::WaitPeriodFromRate(unsigned int hz)
+void sm::Scheduler::AddTask(sm::FastTask fast_task)
 {
-  return (1000000/hz);
+  fast_tasks_.push_back(fast_task);
 }
 
-sm::Scheduler::Scheduler()
-  : next_run_time_us_(MAX_ULONG),
-    wait_period_(sm::Scheduler::WaitPeriodFromRate(1))
+void sm::Scheduler::AddTask(sm::RateTask rate_task)
 {
+  rate_tasks_.push_back(rate_task);
 }
 
-sm::Scheduler::~Scheduler() = default;
-
-void sm::Scheduler::SetRate(unsigned int hz)
+void sm::Scheduler::RunSchedule()
 {
-  wait_period_ = sm::Scheduler::WaitPeriodFromRate(hz);
-}
-
-bool sm::Scheduler::ShouldRun()
-{
-  unsigned long time_now = micros();
-  if (time_now < next_run_time_us_)
+  unsigned long time_now;
+  for (auto fast_task = fast_tasks_.begin(); fast_task != fast_tasks_.end(); ++fast_task)
   {
-    return false;
+    fast_task->RunTask();
   }
 
-  if (time_now > (next_run_time_us_ + wait_period_))
+  for (auto rate_task = rate_tasks_.begin(); rate_task != rate_tasks_.end(); ++rate_task)
   {
-    next_run_time_us_ = time_now + wait_period_;
-    return true;
+    time_now = micros();
+    if (rate_task->ShouldRun(time_now))
+    {
+      rate_task->RunTask();
+    }
   }
-
-  next_run_time_us_ += wait_period_;
-  return true;
-}
-
-void sm::Scheduler::Start()
-{
-  next_run_time_us_ = micros();
-}
-
-void sm::Scheduler::Stop()
-{
-  next_run_time_us_ = MAX_ULONG;
 }

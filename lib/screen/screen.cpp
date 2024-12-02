@@ -42,15 +42,3 @@ void sm::OledScreen::Render()
 {
   display_->sendBuffer();
 }
-
-// void sm::OledScreen::Coords(sensor::NavPvt *pvt)
-// {
-//   unsigned short y_pos = normal_font_ascent_;
-//   display_->clearBuffer();
-//   PrintLine(&y_pos, "lat: %d", pvt->lat);
-//   PrintLine(&y_pos, "lon: %d", pvt->lon);
-//   PrintLine(&y_pos, "alt: %d", pvt->height_msl);
-//   PrintLine(&y_pos, "sats: %d, ac: %d", pvt->num_sv, pvt->hor_acc);
-//   PrintLine(&y_pos, "time: %d:%d:%d", pvt->hour, pvt->minute, pvt->second);
-//   display_->sendBuffer();
-// }

@@ -36,10 +36,10 @@ void sm::Led::Toggle()
 }
 
 void sm::Led::Colour(
-  unsigned char r,
-  unsigned char g,
-  unsigned char b,
-  unsigned char brightness)
+    unsigned char r,
+    unsigned char g,
+    unsigned char b,
+    unsigned char brightness)
 {
   red_ = r;
   green_ = g;
@@ -60,5 +60,4 @@ void sm::Led::UpdateLed()
   }
   leds_[0] = CRGB(red_, green_, blue_);
   FastLED.show();
-
 }

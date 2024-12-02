@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace sm::sensor
 {
   struct NavPvt
@@ -41,5 +43,10 @@ namespace sm::sensor
     short reserved2 = 0;		   // Reserved
     unsigned long reserved3 = 0;   // Reserved
     unsigned char dummy[8];
+    
+    inline static std::shared_ptr<sm::sensor::NavPvt> CreateSharedPtr()
+    {
+      return std::make_shared<sm::sensor::NavPvt>();
+    }
   };
 }

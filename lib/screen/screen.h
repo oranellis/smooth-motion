@@ -1,9 +1,5 @@
 #pragma once
 
-#include "gps_structs.h"
-#include "imu_structs.h"
-#include "scheduler.h"
-
 #include <U8g2lib.h>
 #include <Wire.h>
 

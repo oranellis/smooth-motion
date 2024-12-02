@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #define IMU_I2C_ADDR 0x68
 
 namespace sm::sensor
@@ -19,5 +21,10 @@ namespace sm::sensor
     float mag_z = 0;
 
     float temp = 0;
+
+    inline static std::shared_ptr<sm::sensor::ImuData> CreateSharedPtr()
+    {
+      return std::make_shared<sm::sensor::ImuData>();
+    }
   };
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "scheduler.h"
-
 #include "Arduino.h"
 
 #include <cstdarg>
@@ -12,16 +10,13 @@ namespace sm
 {
   class Usb
   {
-  private:
-    std::unique_ptr<Scheduler> scheduler_;
-
   public:
-    Usb(std::unique_ptr<Scheduler> scheduler_);
+    Usb() = default;
     /// @brief Initialises the USB serial output
     void Init();
     /// @brief Formatted printing to the USB serial output
     /// @param format The formatted string
     /// @param ... The format matches
-    void ScheduledLog(char *message, ...);
+    void Log(char *message, ...);
   };
 }
