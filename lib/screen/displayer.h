@@ -10,11 +10,11 @@ namespace sm
   class Displayer
   {
   private:
-    IDataPage &data_page_;
+    IDataPage * data_page_;
     std::shared_ptr<OledScreen> screen_;
 
   public:
-    Displayer(IDataPage &data_page);
+    Displayer();
     void Display();
     void InitAndSplash(const char *splash_text);
     void SetDataPage(IDataPage &data_page);

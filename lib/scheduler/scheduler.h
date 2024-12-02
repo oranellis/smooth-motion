@@ -1,11 +1,14 @@
 #pragma once
 
+#include "circular_buffer.h"
 #include "fast_task.h"
 #include "rate_task.h"
+#include "usb.h"
 
 #include <Arduino.h>
 
 #include <vector>
+#include <memory>
 
 #define MAX_ULONG 18446744073709551615
 
@@ -16,6 +19,9 @@ namespace sm
   private:
     std::vector<FastTask> fast_tasks_;
     std::vector<RateTask> rate_tasks_;
+    sm::CircularBuffer<unsigned int, 100> loop_times_us_;
+    unsigned int max_loop_time_us_ = 0;
+    unsigned int last_loop_time_us_ = 0; // To keep loop timing calculations within the event loop
 
     Scheduler() = default;
     ~Scheduler() = default;
@@ -30,6 +36,8 @@ namespace sm
     }
     void AddTask(FastTask fast_task);
     void AddTask(RateTask rate_task);
+    void ClearMaxLooptime();
+    void LogLoopTime(std::shared_ptr<sm::Usb> usb);
     void RunSchedule();
   };
 }

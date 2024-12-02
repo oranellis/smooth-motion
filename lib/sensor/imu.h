@@ -27,7 +27,6 @@ namespace sm::sensor
 
   public:
     Imu(std::shared_ptr<sm::sensor::ImuData> imu_data);
-    std::shared_ptr<sm::sensor::ImuData> GetData();
     float GetAverageAccel();
     void InitI2c(unsigned char addr);
     void ReadData();

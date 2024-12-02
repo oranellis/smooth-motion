@@ -94,11 +94,6 @@ void sm::sensor::Imu::InitI2c(unsigned char addr)
   }
 }
 
-std::shared_ptr<sm::sensor::ImuData> sm::sensor::Imu::GetData()
-{
-  return imu_data_;
-}
-
 float sm::sensor::Imu::GetAverageAccel()
 {
   return accel_hist;
@@ -107,10 +102,6 @@ float sm::sensor::Imu::GetAverageAccel()
 void sm::sensor::Imu::ReadData()
 {
   icm_.getEvent(&accel_, &gyro_, &temp_, &mag_);
-
-  char print_cstr[64];
-  snprintf(print_cstr, 64, "x: %0.3f, y: %0.3f, z: %0.3f", accel_.acceleration.x, accel_.acceleration.y, accel_.acceleration.z);
-  Serial.println(print_cstr);
 
   imu_data_->accel_x = accel_.acceleration.x;
   imu_data_->accel_y = accel_.acceleration.y;

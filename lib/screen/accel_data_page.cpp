@@ -8,9 +8,10 @@ void sm::AccelDataPage::DrawPage(std::shared_ptr<sm::OledScreen> screen)
 {
   unsigned short y_pos = sm::OledScreen::normal_font_ascent_;
   screen->Clear();
-  screen->PrintLine(&y_pos, "x: %0.4f", imu_data_->accel_x);
-  screen->PrintLine(&y_pos, "y: %0.4f", imu_data_->accel_y);
-  screen->PrintLine(&y_pos, "z: %0.4f", imu_data_->accel_z);
-  screen->PrintLine(&y_pos, "Mag: %0.4fg", 1.0f / 9.81f);
+  screen->PrintLine(&y_pos, "a_x: %0.4f", imu_data_->accel_x);
+  screen->PrintLine(&y_pos, "a_y: %0.4f", imu_data_->accel_y);
+  screen->PrintLine(&y_pos, "a_z: %0.4f", imu_data_->accel_z);
+  float accel_mag = sqrt(sq(imu_data_->accel_x) + sq(imu_data_->accel_y) + sq(imu_data_->accel_z));
+  screen->PrintLine(&y_pos, "a_mag: %0.4fg", accel_mag / 9.81f);
   screen->Render();
 }

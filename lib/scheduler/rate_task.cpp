@@ -6,7 +6,8 @@ unsigned int sm::RateTask::WaitPeriodFromRate(float hz)
 }
 
 sm::RateTask::RateTask(std::function<void()> func, float rate_hz)
-  : wait_period_(sm::RateTask::WaitPeriodFromRate(rate_hz))
+    : wait_period_(sm::RateTask::WaitPeriodFromRate(rate_hz)),
+      next_run_time_us_(0)
 {
   this->SetTaskFunction(func);
 }

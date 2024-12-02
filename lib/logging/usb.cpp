@@ -1,11 +1,12 @@
 #include "usb.h"
 
-void sm::Usb::Init()
+void sm::Usb::Init(unsigned long baud)
 {
-  Serial.begin(9600);
+  Serial.begin(baud);
   String init_msg = "Welcome to smooth-motion";
   Serial.println(init_msg.c_str());
 }
+
 
 void sm::Usb::Log(char *format, ...)
 {
