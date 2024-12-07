@@ -23,7 +23,7 @@ void SwapPages(sm::Displayer &displayer, bool &is_page_1, sm::IDataPage &page1,
   }
 }
 
-void setup() {
+int main() {
   // LED
   sm::Led led;
   led.Colour(255, 255, 255, 1);
@@ -79,6 +79,6 @@ void setup() {
     scheduler.RunSchedule();
     led.Colour(0, 255, 0, 1);
   }
-}
 
-void loop() {}
+  return 0;
+}

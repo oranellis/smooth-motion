@@ -24,7 +24,7 @@ void sm::sensor::Gps::InitSerial() {
   GPS_SERIAL.begin(115200);
 }
 
-bool sm::sensor::Gps::ReadData() {
+void sm::sensor::Gps::ReadData() {
   static int readPosition = 0;
   static unsigned char checksum[2];
   const int payloadSize = sizeof(sm::sensor::NavPvt);
@@ -56,5 +56,5 @@ bool sm::sensor::Gps::ReadData() {
       }
     }
   }
-  return false;
+  return;
 }
