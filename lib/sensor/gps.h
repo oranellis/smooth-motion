@@ -8,7 +8,8 @@
 
 #define GPS_SERIAL Serial1
 
-namespace sm::sensor {
+namespace sm {
+namespace sensor {
 const unsigned char UBLOX_INIT[] PROGMEM = {
     // Disable NMEA
     0xB5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -79,6 +80,7 @@ class Gps {
   Gps(std::shared_ptr<sm::sensor::NavPvt> nav_pvt);
   ~Gps() = default;
   void InitSerial();
-  bool ReadData();
+  void ReadData();
 };
-}  // namespace sm::sensor
+}  // namespace sensor
+}  // namespace sm
