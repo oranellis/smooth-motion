@@ -2,17 +2,15 @@
 
 #include <functional>
 
-namespace sm
-{
-  class Task
-  {
-  private:
-    std::function<void()> func_;
+namespace sm {
+class Task {
+ private:
+  std::function<void()> func_;
 
-  protected:
-    void SetTaskFunction(std::function<void()>);
+ protected:
+  void SetTaskFunction(std::function<void()>);
 
-  public:
-    void RunTask();
-  };
-}
+ public:
+  void RunTask();
+};
+}  // namespace sm

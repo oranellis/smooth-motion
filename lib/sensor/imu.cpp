@@ -1,54 +1,49 @@
 #include "imu.h"
 
 sm::sensor::Imu::Imu(std::shared_ptr<sm::sensor::ImuData> imu_data)
-  : imu_data_(imu_data)
-{}
+    : imu_data_(imu_data) {}
 
-void sm::sensor::Imu::InitI2c(unsigned char addr)
-{
-  if (!icm_.begin_I2C(addr))
-  {
-    Serial.println("Failed to find ICM20948"); // replace with logger interface
-    while (true)                               // Trap and halt execution
+void sm::sensor::Imu::InitI2c(unsigned char addr) {
+  if (!icm_.begin_I2C(addr)) {
+    Serial.println("Failed to find ICM20948");  // replace with logger interface
+    while (true)                                // Trap and halt execution
     {
       delay(1000);
     }
   }
   Serial.println("Found ICM20948 sensor");
   Serial.print("Accelerometer range set to: ");
-  switch (icm_.getAccelRange())
-  {
-  case ICM20948_ACCEL_RANGE_2_G:
-    Serial.println("+-2G");
-    break;
-  case ICM20948_ACCEL_RANGE_4_G:
-    Serial.println("+-4G");
-    break;
-  case ICM20948_ACCEL_RANGE_8_G:
-    Serial.println("+-8G");
-    break;
-  case ICM20948_ACCEL_RANGE_16_G:
-    Serial.println("+-16G");
-    break;
+  switch (icm_.getAccelRange()) {
+    case ICM20948_ACCEL_RANGE_2_G:
+      Serial.println("+-2G");
+      break;
+    case ICM20948_ACCEL_RANGE_4_G:
+      Serial.println("+-4G");
+      break;
+    case ICM20948_ACCEL_RANGE_8_G:
+      Serial.println("+-8G");
+      break;
+    case ICM20948_ACCEL_RANGE_16_G:
+      Serial.println("+-16G");
+      break;
   }
   Serial.println("OK");
 
   // icm_.setGyroRange(ICM20948_GYRO_RANGE_2000_DPS);
   Serial.print("Gyro range set to: ");
-  switch (icm_.getGyroRange())
-  {
-  case ICM20948_GYRO_RANGE_250_DPS:
-    Serial.println("250 degrees/s");
-    break;
-  case ICM20948_GYRO_RANGE_500_DPS:
-    Serial.println("500 degrees/s");
-    break;
-  case ICM20948_GYRO_RANGE_1000_DPS:
-    Serial.println("1000 degrees/s");
-    break;
-  case ICM20948_GYRO_RANGE_2000_DPS:
-    Serial.println("2000 degrees/s");
-    break;
+  switch (icm_.getGyroRange()) {
+    case ICM20948_GYRO_RANGE_250_DPS:
+      Serial.println("250 degrees/s");
+      break;
+    case ICM20948_GYRO_RANGE_500_DPS:
+      Serial.println("500 degrees/s");
+      break;
+    case ICM20948_GYRO_RANGE_1000_DPS:
+      Serial.println("1000 degrees/s");
+      break;
+    case ICM20948_GYRO_RANGE_2000_DPS:
+      Serial.println("2000 degrees/s");
+      break;
   }
 
   //  icm_.setAccelRateDivisor(4095);
@@ -71,36 +66,31 @@ void sm::sensor::Imu::InitI2c(unsigned char addr)
 
   // icm_.setMagDataRate(AK09916_MAG_DATARATE_10_HZ);
   Serial.print("Magnetometer data rate set to: ");
-  switch (icm_.getMagDataRate())
-  {
-  case AK09916_MAG_DATARATE_SHUTDOWN:
-    Serial.println("Shutdown");
-    break;
-  case AK09916_MAG_DATARATE_SINGLE:
-    Serial.println("Single/One shot");
-    break;
-  case AK09916_MAG_DATARATE_10_HZ:
-    Serial.println("10 Hz");
-    break;
-  case AK09916_MAG_DATARATE_20_HZ:
-    Serial.println("20 Hz");
-    break;
-  case AK09916_MAG_DATARATE_50_HZ:
-    Serial.println("50 Hz");
-    break;
-  case AK09916_MAG_DATARATE_100_HZ:
-    Serial.println("100 Hz");
-    break;
+  switch (icm_.getMagDataRate()) {
+    case AK09916_MAG_DATARATE_SHUTDOWN:
+      Serial.println("Shutdown");
+      break;
+    case AK09916_MAG_DATARATE_SINGLE:
+      Serial.println("Single/One shot");
+      break;
+    case AK09916_MAG_DATARATE_10_HZ:
+      Serial.println("10 Hz");
+      break;
+    case AK09916_MAG_DATARATE_20_HZ:
+      Serial.println("20 Hz");
+      break;
+    case AK09916_MAG_DATARATE_50_HZ:
+      Serial.println("50 Hz");
+      break;
+    case AK09916_MAG_DATARATE_100_HZ:
+      Serial.println("100 Hz");
+      break;
   }
 }
 
-float sm::sensor::Imu::GetAverageAccel()
-{
-  return accel_hist;
-}
+float sm::sensor::Imu::GetAverageAccel() { return accel_hist; }
 
-void sm::sensor::Imu::ReadData()
-{
+void sm::sensor::Imu::ReadData() {
   icm_.getEvent(&accel_, &gyro_, &temp_, &mag_);
 
   imu_data_->accel_x = accel_.acceleration.x;
@@ -117,10 +107,8 @@ void sm::sensor::Imu::ReadData()
 
   imu_data_->temp = temp_.temperature;
 
-  float new_accel = sqrt( \
-    sq(accel_.acceleration.x) + \
-    sq(accel_.acceleration.y) + \
-    sq(accel_.acceleration.z));
-  
+  float new_accel = sqrt(sq(accel_.acceleration.x) + sq(accel_.acceleration.y) +
+                         sq(accel_.acceleration.z));
+
   accel_hist = (accel_hist * HIST_BIAS) + (new_accel * (1.0f - HIST_BIAS));
 }

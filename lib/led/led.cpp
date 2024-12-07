@@ -1,8 +1,7 @@
 #include "led.h"
 
-sm::Led::Led()
-{
-  red_ = 255; // max 8 bit num
+sm::Led::Led() {
+  red_ = 255;  // max 8 bit num
   green_ = 255;
   blue_ = 255;
   brightness_ = 255;
@@ -12,35 +11,25 @@ sm::Led::Led()
   FastLED.setBrightness(0);
 }
 
-sm::Led::~Led()
-{
-  FastLED.clearData();
-}
+sm::Led::~Led() { FastLED.clearData(); }
 
-void sm::Led::On()
-{
+void sm::Led::On() {
   state_ = true;
   UpdateLed();
 }
 
-void sm::Led::Off()
-{
+void sm::Led::Off() {
   state_ = false;
   UpdateLed();
 }
 
-void sm::Led::Toggle()
-{
+void sm::Led::Toggle() {
   state_ = !state_;
   UpdateLed();
 }
 
-void sm::Led::Colour(
-    unsigned char r,
-    unsigned char g,
-    unsigned char b,
-    unsigned char brightness)
-{
+void sm::Led::Colour(unsigned char r, unsigned char g, unsigned char b,
+                     unsigned char brightness) {
   red_ = r;
   green_ = g;
   blue_ = b;
@@ -48,14 +37,10 @@ void sm::Led::Colour(
   UpdateLed();
 }
 
-void sm::Led::UpdateLed()
-{
-  if (state_)
-  {
+void sm::Led::UpdateLed() {
+  if (state_) {
     FastLED.setBrightness(brightness_);
-  }
-  else
-  {
+  } else {
     FastLED.setBrightness(0);
   }
   leds_[0] = CRGB(red_, green_, blue_);
