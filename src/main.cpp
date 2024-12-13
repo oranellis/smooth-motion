@@ -23,7 +23,7 @@ void SwapPages(sm::Displayer &displayer, bool &is_page_1, sm::IDataPage &page1,
   }
 }
 
-int main() {
+void setup() {
   // LED
   sm::Led led;
   led.Colour(255, 255, 255, 1);
@@ -59,11 +59,11 @@ int main() {
   scheduler.AddTask(sm::FastTask([&imu]() { imu.ReadData(); }));
   scheduler.AddTask(sm::RateTask([&gps]() { gps.ReadData(); }, 10));
   scheduler.AddTask(sm::RateTask([&displayer]() { displayer.Display(); }, 30));
-  scheduler.AddTask(sm::RateTask(
-      [&displayer, &is_gps_page, &gps_data_page, &accel_data_page]() {
-        SwapPages(displayer, is_gps_page, gps_data_page, accel_data_page);
-      },
-      0.2));
+  // scheduler.AddTask(sm::RateTask(
+  //     [&displayer, &is_gps_page, &gps_data_page, &accel_data_page]() {
+  //       SwapPages(displayer, is_gps_page, gps_data_page, accel_data_page);
+  //     },
+  //     0.2));
   // scheduler.AddTask(sm::RateTask([&accel_logger]()
   //                                { accel_logger.LogAccel(); }, 20));
   scheduler.AddTask(
@@ -79,6 +79,6 @@ int main() {
     scheduler.RunSchedule();
     led.Colour(0, 255, 0, 1);
   }
-
-  return 0;
 }
+
+void loop() {/* Unused */}

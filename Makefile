@@ -10,7 +10,7 @@ build:
 
 flash:
 	@echo "Building and flashing pico"
-	@pio run --target flash
+	@pio run --target upload
 
 compiledb:
 	@echo "Generating compile_commands.json"
